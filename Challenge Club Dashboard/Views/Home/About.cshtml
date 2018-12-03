@@ -1,7 +1,76 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+﻿@using Challenge_Club_Dashboard.Models
 
-<p>Use this area to provide additional information.</p>
+
+<br />
+<br />
+
+@{
+    ViewBag.Title = "Activities";
+}
+
+<h1>Verify the activities for each member for today</h1>
+<br />
+<br />
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            @foreach (var item in ViewBag.Activities)
+            {
+                <th>@item</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Members)
+        {
+            <tr>
+                <td>@item</td>
+                @foreach (var checkbox in ViewBag.Activities)
+                {
+                    <td>
+                        @{
+                            var ma = ((IEnumerable<MemberActivity>)ViewBag.MemberActivities).FirstOrDefault(m => m.Member == item && m.Activity == checkbox);
+                            if (ma == null)
+                            {
+                                <form method="post" action="/home/create">
+                                    <input type="hidden" value="@item" name="Member" />
+                                    <input type="hidden" value="@checkbox" name="Activity" />
+                                    <button type="submit">
+                                        &#10061;
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" action="/home/delete/@ma.Id">
+                                    <button type="submit">
+                                        &#10004;
+                                    </button>
+                                </form>
+                            }
+                        }
+                    </td>
+                            }
+            </tr>
+                            }
+    </tbody>
+</table>
